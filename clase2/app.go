@@ -3,11 +3,16 @@ package main
 import (
 	"fmt"
 
-	"github.com/rossifedericoe/bootcamp/clase2/services"
+	"github.com/rossifedericoe/bootcamp/clase2/services/movieService"
 )
 
 func main() {
-	_, err := services.Crear(123, "123", "")
+	movie, err := movieService.Crear(123, "foo", "bar")
 
-	fmt.Println(err)
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		fmt.Println("Película creada exitosamente: " + fmt.Sprintf("%+v", *movie))
+	}
+
 }
