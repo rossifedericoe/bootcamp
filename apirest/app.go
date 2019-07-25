@@ -19,13 +19,13 @@ func main() {
 		var movieDTO dto.MovieDTO
 		bindErr := context.BindJSON(&movieDTO)
 		if bindErr != nil {
-			context.JSON(400, bindErr)
+			context.JSON(400, bindErr.Error())
 			return
 		}
 
 		movieCreada, crearErr := movieService.Crear(movieDTO.Title, movieDTO.Language, movieDTO.Budget, movieDTO.Revenue, movieDTO.IMDB)
 		if crearErr != nil {
-			context.JSON(400, crearErr)
+			context.JSON(400, crearErr.Error())
 			return
 		}
 
@@ -36,7 +36,7 @@ func main() {
 		id, _ := strconv.Atoi(context.Param("id"))
 		eliminarErr := movieService.EliminarMovie(id)
 		if eliminarErr != nil {
-			context.JSON(404, eliminarErr)
+			context.JSON(404, eliminarErr.Error())
 			return
 		}
 		context.JSON(200, "pudo borrarse")

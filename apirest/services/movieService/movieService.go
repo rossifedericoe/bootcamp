@@ -2,6 +2,7 @@ package movieService
 
 import (
 	"errors"
+	"time"
 
 	"github.com/rossifedericoe/bootcamp/apirest/domain"
 	"github.com/rossifedericoe/bootcamp/apirest/repository"
@@ -30,14 +31,30 @@ func Crear(title string, lang string, budget int64, revenue int64, imdb string) 
 }
 
 func ListarMovies() []domain.Movie {
-	return repository.ListarTodos()
+	allMovies := repository.ListarTodos()
+	for i, _ := range allMovies {
+		allMovies[i].Country = GetPaisPorIdioma(allMovies[i].Language)
+	}
+	return allMovies
 }
 
 func EliminarMovie(idToDelete int) error {
 	movieAEliminar := repository.ObtenerPorId(idToDelete)
-	if movieAEliminar == nil {
+	if movieAEliminar == nil || movieAEliminar.ID == 0 {
 		return errors.New("No se puede eliminar la pelicula porque no existe")
 	}
 	repository.Eliminar(movieAEliminar)
 	return nil
+}
+
+func GetPaisPorIdioma(idioma string) string {
+	time.Sleep(1 * time.Millisecond)
+	switch idioma {
+	case "en":
+		return "Estados Unidos"
+	case "es":
+		return "Argentina"
+	default:
+		return "Pakistan"
+	}
 }

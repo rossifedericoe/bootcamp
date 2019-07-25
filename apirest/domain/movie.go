@@ -7,6 +7,7 @@ type Movie struct {
 	Budget   int64  `json:"budget"`
 	Revenue  int64  `json:"ah"`
 	IMDB     string `json:"imdb"`
+	Country  string `json:"country"`
 }
 
 func (movie Movie) ValidTitle() bool {
