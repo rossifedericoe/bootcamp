@@ -23,7 +23,7 @@ func main() {
 			return
 		}
 
-		movieCreada, crearErr := movieService.Crear(movieDTO.ID, movieDTO.Title, movieDTO.Language)
+		movieCreada, crearErr := movieService.Crear(movieDTO.Title, movieDTO.Language, movieDTO.Budget, movieDTO.Revenue, movieDTO.IMDB)
 		if crearErr != nil {
 			context.JSON(400, crearErr)
 			return

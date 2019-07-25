@@ -2,48 +2,42 @@ package movieService
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/rossifedericoe/bootcamp/apirest/domain"
+	"github.com/rossifedericoe/bootcamp/apirest/repository"
 	"github.com/rossifedericoe/bootcamp/apirest/services/contentService"
 )
 
 // NO HACER ESTO EN PRODU
-var moviesDatabase []domain.Movie = []domain.Movie{}
+//var moviesDatabase []domain.Movie = []domain.Movie{}
 
-func Crear(id int, title string, lang string) (*domain.Movie, error) {
+func Crear(title string, lang string, budget int64, revenue int64, imdb string) (*domain.Movie, error) {
 	movie := domain.Movie{
-		ID:       id,
 		Title:    title,
 		Language: lang,
+		Budget:   budget,
+		Revenue:  revenue,
+		IMDB:     imdb,
 	}
 
 	isValidMovie, invalidSection := contentService.IsValidContent(movie)
 	if !isValidMovie {
 		return nil, errors.New("La pelicula no es valida, no tiene " + invalidSection)
 	}
-	moviesDatabase = append(moviesDatabase, movie)
+	// moviesDatabase = append(moviesDatabase, movie)
+	repository.Crear(&movie)
 	return &movie, nil
 }
 
 func ListarMovies() []domain.Movie {
-	return moviesDatabase
+	return repository.ListarTodos()
 }
 
 func EliminarMovie(idToDelete int) error {
-	eliminado := false
-	var newMoviesDatabase []domain.Movie = []domain.Movie{}
-	for _, movie := range moviesDatabase {
-		if movie.ID == idToDelete {
-			eliminado = true
-		} else {
-			newMoviesDatabase = append(newMoviesDatabase, movie)
-		}
+	movieAEliminar := repository.ObtenerPorId(idToDelete)
+	if movieAEliminar == nil {
+		return errors.New("No se puede eliminar la pelicula porque no existe")
 	}
-	moviesDatabase = newMoviesDatabase
-	if eliminado {
-		return nil
-	} else {
-		return errors.New("No se encontro movie con id " + fmt.Sprint(idToDelete))
-	}
+	repository.Eliminar(movieAEliminar)
+	return nil
 }
