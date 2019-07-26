@@ -45,7 +45,8 @@ func EliminarMovie(idToDelete int) error {
 }
 
 // Funcion que internamente simula la llamada a un servicio externo para que nos diga
-// en que pais se puede mostrar la pelicula en base al idioma
+// en que pais se puede mostrar la pelicula en base al idioma.
+// Tiene un sleep de 1 milisegundo para que parezca un poco mas real
 func GetPaisPorIdioma(idioma string) string {
 	time.Sleep(1 * time.Millisecond)
 	switch idioma {
