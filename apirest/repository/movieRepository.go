@@ -11,6 +11,8 @@ import (
 var database *gorm.DB
 
 func init() {
+	// Warning: Nunca acceder a la DB con root desde una aplicacion
+	// Warning 2: Nunca poner contraseñas/claves/keys directo en codigo, una opcion valida es tomarlo desde variables de entorno
 	db, dbErr := gorm.Open("mysql", "root:go@tcp(127.0.0.1:3306)/bootcamp_data")
 	if dbErr != nil {
 		fmt.Println("No se pudo conectar con la base de datos")

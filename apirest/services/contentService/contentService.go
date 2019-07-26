@@ -1,3 +1,8 @@
+// Servicio basico que se encarga de recibir cualquier cosa que immplemente la interfaz "content", osea,
+// que es un contenido; y valida que tenga minimamente algo como titulo y como idioma.
+
+// Si tuvieramos la entidad de dominio serie o documental (ademas de pelicula), podria implementar la misma
+// interfaz y usar este servicio para validar su titulo e idioma.
 package contentService
 
 import (

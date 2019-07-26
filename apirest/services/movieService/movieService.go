@@ -9,9 +9,6 @@ import (
 	"github.com/rossifedericoe/bootcamp/apirest/services/contentService"
 )
 
-// NO HACER ESTO EN PRODU
-//var moviesDatabase []domain.Movie = []domain.Movie{}
-
 func Crear(title string, lang string, budget int64, revenue int64, imdb string) (*domain.Movie, error) {
 	movie := domain.Movie{
 		Title:    title,
@@ -47,6 +44,8 @@ func EliminarMovie(idToDelete int) error {
 	return nil
 }
 
+// Funcion que internamente simula la llamada a un servicio externo para que nos diga
+// en que pais se puede mostrar la pelicula en base al idioma
 func GetPaisPorIdioma(idioma string) string {
 	time.Sleep(1 * time.Millisecond)
 	switch idioma {

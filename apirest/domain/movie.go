@@ -1,5 +1,6 @@
 package domain
 
+// Nuestra entidad de dominio
 type Movie struct {
 	ID       int    `json:"id" gorm:"primary_key"`
 	Title    string `json:"title"`
