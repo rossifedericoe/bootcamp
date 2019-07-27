@@ -15,6 +15,10 @@ func main() {
 		context.JSON(200, movieService.ListarMovies())
 	})
 
+	engine.GET("/movies/populares", func(context *gin.Context) {
+		context.JSON(200, movieService.ListarMoviesPopulares())
+	})
+
 	engine.POST("/movies", func(context *gin.Context) {
 		var movieDTO dto.MovieDTO
 		bindErr := context.BindJSON(&movieDTO)

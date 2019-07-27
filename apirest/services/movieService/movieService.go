@@ -2,6 +2,8 @@ package movieService
 
 import (
 	"errors"
+	"fmt"
+	"sync"
 	"time"
 
 	"github.com/rossifedericoe/bootcamp/apirest/domain"
@@ -29,10 +31,44 @@ func Crear(title string, lang string, budget int64, revenue int64, imdb string) 
 
 func ListarMovies() []domain.Movie {
 	allMovies := repository.ListarTodos()
+
+	var waitGroup sync.WaitGroup
+	waitGroup.Add(len(allMovies))
+
 	for i, _ := range allMovies {
-		allMovies[i].Country = GetPaisPorIdioma(allMovies[i].Language)
+		go setPais(&allMovies[i], &waitGroup)
 	}
+
+	waitGroup.Wait()
+
 	return allMovies
+}
+
+func ListarMoviesPopulares() []domain.Movie {
+	allMovies := repository.ListarTodos()
+
+	popularesCh := make(chan domain.Movie, len(allMovies))
+	normalesCh := make(chan domain.Movie, len(allMovies))
+
+	for _, movie := range allMovies {
+		go calificar(movie, popularesCh, normalesCh)
+	}
+
+	var moviePopoulares []domain.Movie
+	var moviesNormales []domain.Movie
+
+	for index := 0; index < len(allMovies); index++ {
+		select {
+		case pop := <-popularesCh:
+			moviePopoulares = append(moviePopoulares, pop)
+		case normal := <-normalesCh:
+			moviesNormales = append(moviesNormales, normal)
+		}
+	}
+
+	fmt.Println("La cantidad de movies consideradas no-populares (normales) son: " + fmt.Sprint(len(moviesNormales)))
+
+	return moviePopoulares
 }
 
 func EliminarMovie(idToDelete int) error {
@@ -47,14 +83,27 @@ func EliminarMovie(idToDelete int) error {
 // Funcion que internamente simula la llamada a un servicio externo para que nos diga
 // en que pais se puede mostrar la pelicula en base al idioma.
 // Tiene un sleep de 1 milisegundo para que parezca un poco mas real
-func GetPaisPorIdioma(idioma string) string {
+func setPais(movie *domain.Movie, waitGroup *sync.WaitGroup) {
 	time.Sleep(1 * time.Millisecond)
-	switch idioma {
+	switch movie.Language {
 	case "en":
-		return "Estados Unidos"
+		movie.Country = "Estados Unidos"
 	case "es":
-		return "Argentina"
+		movie.Country = "Argentina"
 	default:
-		return "Pakistan"
+		movie.Country = "Pakistan"
+	}
+	waitGroup.Done()
+}
+
+// Funcion que internamente simula la llamada a un servicio externo para que nos diga
+// si una movie puede ser considerada popular o no.
+// Tiene un sleep de 1 milisegundo para que parezca un poco mas real
+func calificar(movie domain.Movie, popularesCh chan domain.Movie, normalesCh chan domain.Movie) {
+	time.Sleep(500 * time.Millisecond)
+	if movie.Revenue > (movie.Budget * 10) {
+		popularesCh <- movie
+	} else {
+		normalesCh <- movie
 	}
 }
